@@ -3,9 +3,9 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const pool = require("db");
+const pool = require("./db");
 const bcrypt = require("bcrypt");
-const jwt = require("jwt"); 
+const jwt = require("jsonwebtoken"); 
 
 app.use(express.json());
 app.use(cors());
@@ -24,9 +24,9 @@ app.post("/auth/register", async (req, res) => {
 
           const salt = await bcrypt.genSalt(10);
           const hashedPassword = await bcrypt.hash(password, salt);
-          const newUser = await pool.query("INSET INTO users (user_name, user_email, user_password) VALUES ($1, $2, $3) RETURNING *", [name, email, bcryptPassword]);
+          const newUser = await pool.query("INSERT INTO users (user_name, user_email, user_password) VALUES ($1, $2, $3) RETURNING *", [name, email, hashedPassword]);
 
-          const token = jwt.sign({user: newUser.rows.user_id}, "3lcV6vHNKwLZ1V3KtcUNO3DBvCtHUgUqbZiuAW4kn2k");
+          const token = jwt.sign({user: newUser.rows[0].user_id}, "3lcV6vHNKwLZ1V3KtcUNO3DBvCtHUgUqbZiuAW4kn2k");
           res.json(token);
     } catch(err){
         res.status(500).send("server error");
