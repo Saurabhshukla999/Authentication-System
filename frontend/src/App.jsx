@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
+import Profile from "./Profile";
+import Settings from "./Settings";
+import PublicPage from "./PublicPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { getRoleFromToken, isAdmin } from "./utils/auth";
 import axios from "axios";
 
@@ -48,6 +52,12 @@ function Dashboard() {
         </div>
       )}
       <div style={{marginTop: "20px"}}>
+        <Link to="/profile" className="btn btn-info" style={{marginRight: "10px"}}>
+          View Profile
+        </Link>
+        <Link to="/settings" className="btn btn-warning" style={{marginRight: "10px"}}>
+          Settings
+        </Link>
         {isAdmin() && (
           <Link to="/admin" className="btn btn-primary" style={{marginRight: "10px"}}>
             Go to Admin Page
@@ -167,7 +177,11 @@ function App() {
         <Routes>
           <Route 
             path="/" 
-            element={<Navigate to="/login" replace />} 
+            element={<PublicPage />} 
+          />
+          <Route 
+            path="/public" 
+            element={<PublicPage />} 
           />
           <Route 
             path="/login" 
@@ -183,7 +197,27 @@ function App() {
           />
           <Route 
             path="/admin" 
-            element={isAuthenticated && isAdmin() ? <AdminPage /> : <Navigate to="/dashboard" />} 
+            element={
+              <ProtectedRoute requireAdmin={true}>
+                <AdminPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/profile" 
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/settings" 
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            } 
           />
         </Routes>
       </div>
