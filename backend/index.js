@@ -10,10 +10,6 @@ const jwt = require("jsonwebtoken");
 app.use(express.json());
 app.use(cors());
 
-// ============================================
-// MIDDLEWARE - This is like a security guard!
-// ============================================
-// This function checks if someone is logged in (has a token)
 const verifyToken = (req, res, next) => {
   // Get the token from the request (like checking their ID card)
   const token = req.headers.authorization?.split(" ")[1]; // "Bearer TOKEN" -> "TOKEN"
@@ -107,12 +103,90 @@ app.get("/auth/me", verifyToken, async (req, res) => {
   }
 });
 
+// ============================================
+// PUBLIC ROUTES - Anyone can access these!
+// ============================================
+
+// This is a PUBLIC route - no protection needed!
+app.get("/public/info", (req, res) => {
+  res.json({
+    message: "This is public information! Anyone can see this!",
+    website: "Authentication System",
+    version: "1.0.0"
+  });
+});
+
+// ============================================
+// PROTECTED ROUTES - Need login to access!
+// ============================================
+
+// This route tells you who YOU are (like checking your own ID card)
+// PROTECTED: You need a token to see this!
+app.get("/auth/me", verifyToken, async (req, res) => {
+  try {
+    // Get your user info from the database
+    const user = await pool.query("SELECT user_id, user_name, user_email, role FROM users WHERE user_id = $1", [req.user.user]);
+    if (user.rows.length === 0) {
+      return res.status(404).json("User not found!");
+    }
+    res.json(user.rows[0]); // Send back your info
+  } catch (err) {
+    res.status(500).send("server error");
+  }
+});
+
+// This is a PROTECTED route - only logged-in users can update their profile
+app.put("/auth/profile", verifyToken, async (req, res) => {
+  try {
+    const { name } = req.body;
+    const userId = req.user.user; // Get user ID from token
+    
+    // Update only YOUR profile (can't update someone else's!)
+    const updatedUser = await pool.query(
+      "UPDATE users SET user_name = $1 WHERE user_id = $2 RETURNING user_id, user_name, user_email, role",
+      [name, userId]
+    );
+    
+    res.json({
+      message: "Profile updated successfully!",
+      user: updatedUser.rows[0]
+    });
+  } catch (err) {
+    res.status(500).send("server error");
+  }
+});
+
+// ============================================
+// ADMIN-ONLY ROUTES - Only admins can access!
+// ============================================
+
 // This is the ADMIN ROOM - only admins can enter!
 app.get("/admin/users", isAdmin, async (req, res) => {
   try {
     // Only admins can see all users (like a principal seeing all students)
     const allUsers = await pool.query("SELECT user_id, user_name, user_email, role FROM users");
-    res.json(allUsers.rows);
+    res.json({
+      message: "Admin access granted!",
+      totalUsers: allUsers.rows.length,
+      users: allUsers.rows
+    });
+  } catch (err) {
+    res.status(500).send("server error");
+  }
+});
+
+// Another admin-only route - admins can delete users
+app.delete("/admin/users/:id", isAdmin, async (req, res) => {
+  try {
+    const userId = req.params.id;
+    
+    // Only admins can delete users
+    await pool.query("DELETE FROM users WHERE user_id = $1", [userId]);
+    
+    res.json({
+      message: `User ${userId} deleted successfully!`,
+      deleted: true
+    });
   } catch (err) {
     res.status(500).send("server error");
   }
