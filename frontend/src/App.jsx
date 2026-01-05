@@ -9,15 +9,12 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { getRoleFromToken, isAdmin } from "./utils/auth";
 import axios from "axios";
 
-// ============================================
-// DASHBOARD - Regular user's home page
-// ============================================
+
 function Dashboard() {
   const [userInfo, setUserInfo] = useState(null);
   const role = getRoleFromToken();
 
   useEffect(() => {
-    // Get your own info from the server
     const fetchUserInfo = async () => {
       try {
         const token = localStorage.getItem("token");
