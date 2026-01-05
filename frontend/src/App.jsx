@@ -47,7 +47,7 @@ function Dashboard() {
             <p style={{color: "green"}}>🌟 You are an ADMIN! You have special powers!</p>
           )}
         </div>
-      )}
+      )} <>Updated messege</>
       <div style={{marginTop: "20px"}}>
         <Link to="/profile" className="btn btn-info" style={{marginRight: "10px"}}>
           View Profile
