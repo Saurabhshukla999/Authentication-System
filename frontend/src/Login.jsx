@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import API_URL from "./config";
 
 const Login = ({ setAuth }) => {
   const [inputs, setInputs] = useState({
@@ -19,7 +20,7 @@ const Login = ({ setAuth }) => {
     try {
       const body = { email, password };
       // Connect to the Node backend
-      const response = await axios.post("http://localhost:5000/auth/login", body);
+      const response = await axios.post(`${API_URL}/auth/login`, body);
 
       // Save token to local storage so the user stays logged in
       const parseRes = response.data;
