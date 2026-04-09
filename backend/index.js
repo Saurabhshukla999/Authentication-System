@@ -8,12 +8,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken"); 
 
 app.use(express.json());
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
-}));
-
-const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = [
   'http://localhost:5000',
@@ -21,6 +15,13 @@ const allowedOrigins = [
   'http://localhost:5173',
   'https://authentication-frontend.onrender.com' // Your frontend URL
 ];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
+
+const PORT = process.env.PORT || 5000;
 
 const verifyToken = (req, res, next) => {
   // Get the token from the request (like checking their ID card)
