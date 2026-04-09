@@ -8,6 +8,7 @@ import PublicPage from "./PublicPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { getRoleFromToken, isAdmin } from "./utils/auth";
 import axios from "axios";
+import API_URL from "./config";
 
 
 function Dashboard() {
@@ -18,7 +19,7 @@ function Dashboard() {
     const fetchUserInfo = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:5000/auth/me", {
+       const response = await axios.get(`${API_URL}/auth/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUserInfo(response.data);
@@ -78,7 +79,7 @@ function AdminPage() {
     const fetchAllUsers = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:5000/admin/users", {
+       const response = await axios.get(`${API_URL}/admin/users`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setAllUsers(response.data);
