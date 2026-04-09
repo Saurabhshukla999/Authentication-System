@@ -13,7 +13,7 @@ const allowedOrigins = [
   'http://localhost:5000',
   'http://localhost:3000',
   'http://localhost:5173',
-  'https://authentication-frontend.onrender.com' // Your frontend URL
+  'https://authentication-frontend-ekxk.onrender.com' 
 ];
 
 app.use(cors({
