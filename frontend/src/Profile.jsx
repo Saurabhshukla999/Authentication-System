@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import API_URL from "./config";
 
 function Profile() {
   const [userInfo, setUserInfo] = useState(null);
@@ -26,7 +27,7 @@ function Profile() {
         }
 
         // Send token with the request (like showing ID card)
-        const response = await axios.get("http://localhost:5000/auth/me", {
+        const response = await axios.get(`${API_URL}/auth/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         
