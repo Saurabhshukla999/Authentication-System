@@ -10,6 +10,8 @@ const jwt = require("jsonwebtoken");
 app.use(express.json());
 app.use(cors());
 
+const PORT = process.env.PORT || 5000;
+
 const verifyToken = (req, res, next) => {
   // Get the token from the request (like checking their ID card)
   const token = req.headers.authorization?.split(" ")[1]; // "Bearer TOKEN" -> "TOKEN"
