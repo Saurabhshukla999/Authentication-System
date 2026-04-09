@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import API_URL from "./config";
 
 const Register = ({ setAuth }) => {
   const navigate = useNavigate();
@@ -20,8 +21,7 @@ const Register = ({ setAuth }) => {
     e.preventDefault();
     try {
       const body = { name, email, password };
-      const response = await axios.post("http://localhost:5000/auth/register", body);
-
+     const response = await axios.post(`${API_URL}/auth/register`, body);
       const parseRes = response.data;
 
       if (parseRes.token) {
