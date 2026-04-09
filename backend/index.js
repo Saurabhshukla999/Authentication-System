@@ -16,6 +16,7 @@ app.use(cors({
 const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = [
+  'http://localhost:5000',
   'http://localhost:3000',
   'http://localhost:5173',
   'https://authentication-frontend.onrender.com' // Your frontend URL
